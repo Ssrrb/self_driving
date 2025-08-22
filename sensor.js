@@ -56,26 +56,31 @@ class Sensor{
             this.rays.push({start, end});
         }
     }
-draw(ctx){
-            for (let i = 0; i < this.rayCount; i++){
-                let end= this.rays[i][1];
-                if (this.readings[i]){
-                    end = this.readings[i];
-                }
-                ctx.beginPath();
-                ctx.strokeStyle = "yellow";
-                ctx.lineWidth = 2;
-                ctx.moveTo(this.rays[i][0], this.rays[i][0]);
-                ctx.lineTo(end.x, end.y);
-                ctx.stroke();
+    draw(ctx){
+        for (let i = 0; i < this.rayCount; i++){
+            const ray = this.rays[i];
+            if (!ray) continue;
 
-                
-                ctx.beginPath();
-                ctx.moveTo(this.rays[i][1], this.rays[i][1]);
-                ctx.lineTo(end.x, end.y);
-                
-                ctx.strokeStyle = "black";
-                ctx.stroke();
+            let end = ray.end;
+            if (this.readings[i]){
+                end = this.readings[i];
             }
+
+            // Visible (yellow) segment: from start to detected end
+            ctx.beginPath();
+            ctx.strokeStyle = "yellow";
+            ctx.lineWidth = 2;
+            ctx.moveTo(ray.start.x, ray.start.y);
+            ctx.lineTo(end.x, end.y);
+            ctx.stroke();
+
+            // Hidden (black) segment: from detected end to ray end
+            ctx.beginPath();
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+            ctx.moveTo(end.x, end.y);
+            ctx.lineTo(ray.end.x, ray.end.y);
+            ctx.stroke();
         }
     }
+}
