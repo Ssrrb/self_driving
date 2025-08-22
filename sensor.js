@@ -8,31 +8,44 @@ class Sensor{
         this.rays = [];
         this.readings = []; // distances to obstacles detected by the rays
     }
-
-    #getReading(ray, roadBorders){
-        let touches = [];
-        for (let i = 0; i < roadBorders.length; i++){
-            const touch = getIntersection(ray.start, ray.end, roadBorders[i][0], roadBorders[i][1]);
-            if (touch){
-                touches.push(touch);
+    #getReading(ray, roadBorders, traffic){
+    let touches = [];
+    
+    // Check intersections with road borders
+    for (let i = 0; i < roadBorders.length; i++){
+        const touch = getIntersection(ray.start, ray.end, roadBorders[i][0], roadBorders[i][1]);
+        if (touch){
+            touches.push(touch);
+        }
+    }
+    
+    // Check intersections with traffic
+    for (let i = 0; i < traffic.length; i++){ // Fixed: was "0 < traffic.length"
+        const poly = traffic[i].polygon;
+        for (let j = 0; j < poly.length; j++){
+            const value = getIntersection(ray.start, ray.end, poly[j], poly[(j + 1) % poly.length]);
+            if (value){
+                touches.push(value);
             }
         }
-        if (touches.length === 0){
-            return null; // No intersection found
-        }else{
-            const offsets = touches.map(e => e.offset);
-            const minOffset = Math.min(...offsets);
-            return touches.find(e => e.offset === minOffset);
-        }
-
     }
+    
+    // Return the closest intersection
+    if (touches.length === 0){
+        return null; // No intersection found
+    } else {
+        const offsets = touches.map(e => e.offset);
+        const minOffset = Math.min(...offsets);
+        return touches.find(e => e.offset === minOffset);
+    }
+}
 
-    update(roadBorders){
+    update(roadBorders,traffic){
         this.#castRays();
         this.readings = [];
         for (let i = 0; i < this.rays.length; i++){
             this.readings.push(
-                this.#getReading(this.rays[i], roadBorders)
+                this.#getReading(this.rays[i], roadBorders, traffic)
             );
         }
             

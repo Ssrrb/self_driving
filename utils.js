@@ -4,21 +4,32 @@ function lerp(A, B, t) {
 }
 
 function getIntersection(A, B, C, D) {
-    const tTop = (D.x-C.x) * (A.y - C.y) - (D.y - C.y) * (A.x - C.x);
-    const uTop = (C.y - A.y) * (A.x - B.x) - (C.x - A.x) * (A.y - C.y);
-    const bottom = (D.y - C.y) * (B.x - A.x) - (D.x - C.x) * (B.y - A.y);
+    // Correct 2D segment intersection using cross products:
+    // denom = (B-A) x (D-C)
+    // t = (C-A) x (D-C) / denom
+    // u = (C-A) x (B-A) / denom
+    const BAx = B.x - A.x;
+    const BAy = B.y - A.y;
+    const DCx = D.x - C.x;
+    const DCy = D.y - C.y;
+    const CAx = C.x - A.x;
+    const CAy = C.y - A.y;
 
-    if (bottom !== 0) {
-        const t = tTop / bottom;
-        const u = uTop / bottom;
+    const denom = BAx * DCy - BAy * DCx;
+    if (denom === 0) return null; // Parallel or collinear
 
-        if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
-            return {
-                x: lerp(A.x, B.x, t),
-                y: lerp(A.y, B.y, t),
-                offset:t 
-            };
-        }
+    const tTop = CAx * DCy - CAy * DCx;
+    const uTop = CAx * BAy - CAy * BAx;
+
+    const t = tTop / denom;
+    const u = uTop / denom;
+
+    if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+        return {
+            x: lerp(A.x, B.x, t),
+            y: lerp(A.y, B.y, t),
+            offset: t
+        };
     }
     return null; // No intersection
 }

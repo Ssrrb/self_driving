@@ -1,1 +1,3 @@
 # self_driving
+Este es un proyecto de un coche autonomo que utiliza redes neuronales simples para conducir por una carretera con trafico.
+El algoritmo para la deteccion de colisiones y la simulacion fisica esta hecho desde cero, sin librerias. Ellos funcionan a traves de intersecciones de poligonos y lineas, constantemente calculando si el coche ha chocado con algo utilizando sensores(basicamente lo que ocurre es con unas rectas de proximidad si un objeto esta lo suficientemente cerca este intersecta en un punto o en varios con nuestros "rayos"), similares a los LIDARs de los coches autonomos reales.
