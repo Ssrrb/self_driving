@@ -42,7 +42,7 @@ class Road{
             ctx.lineTo(x, this.bottom);
             ctx.stroke();
     }
-    ctx.setLineeDash([]);
+    ctx.setLineDash([]);
     this.borders.forEach(border=>{
         ctx.beginPath();
         ctx.moveTo(border[0].x, border[0].y);
